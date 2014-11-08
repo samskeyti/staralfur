@@ -1,1 +1,37 @@
-Staralfur
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>starálfur</title>
+    <meta name="description" content="starálfur">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+</head>
+<body>
+  
+  <button onclick="hello('instagram').login()">IG</button>    
+    
+  <script src="js/hello.all.min.js"></script>
+  <script>
+      hello.init({ 
+        instagram : 'f9b6f7bd772044dd9f0344dc5af4f056'
+    },{redirect_uri:''});
+
+      hello.on('auth.login', function(auth){
+	
+	// call user information, for the given network
+	hello( auth.network ).api( '/me' ).then( function(r){
+		// Inject it into the container
+		var label = document.getElementById( "profile_"+ auth.network );
+		if(!label){
+			label = document.createElement('div');
+			label.id = "profile_"+auth.network;
+			document.getElementById('profile').appendChild(label);
+		}
+		label.innerHTML = '<img src="'+ r.thumbnail +'" /> Hey '+r.name;
+	});
+});
+  </script>
+</body>
+</html>
