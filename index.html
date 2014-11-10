@@ -18,8 +18,10 @@
         instagram : 'f9b6f7bd772044dd9f0344dc5af4f056'
     },{redirect_uri:''});
 
+      var access_token = '';
+      
       hello.on('auth.login', function(auth){
-	
+	   access_token = auth.authResponse.access_token;
 	// call user information, for the given network
 	hello( auth.network ).api( '/me' ).then( function(r){
 		// Inject it into the container
