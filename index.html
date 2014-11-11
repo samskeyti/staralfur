@@ -35,7 +35,7 @@
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <h1 class="samskeyti">starálfur</h1>
-                <h3><small>search {{search.id ? '@'+search.username : 'Instagram'}} photos</small></h3>
+                <h3><small>search <a href="https://instagram.com{{search.id ? '/'+search.username : ''}}" target="_blank">{{search.id ? '@'+search.username : 'Instagram'}}</a> photos</small></h3>
                 <div class="v-spacer" ng-show="!user.id && !search.id"></div>
                 <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
 </a>
@@ -188,10 +188,11 @@
         
         $scope.setSearchId = function(id){
             $scope.search.id = id;
-            if(id==$user.id)
+            if(id==$scope.user.id)
                 $scope.search.username = $user.name;
-            if(id)
+            if(id){
                 $scope.loadMedia();
+            }
             else{
                 $scope.search.username = '';
                 $scope.media = [];
