@@ -173,8 +173,8 @@
         };
         
         $scope.searchUser = function(){
-            if($scope.search.username){
-                var url = 'ttps://api.instagram.com/v1/users/search?q=' + $scope.search.username + '&access_token=' + $scope.access_token + '&count=1&callback=JSON_CALLBACK';
+            if($scope.search.username && $scope.search.username.length>=3){
+                var url = 'https://api.instagram.com/v1/users/search?q=' + $scope.search.username + '&access_token=' + $scope.access_token + '&count=1&callback=JSON_CALLBACK';
                 $http.jsonp(url)
                     .success(function(response){
                         if(response.data[0].username.toLowerCase()==$scope.search.username.toLowerCase()){
