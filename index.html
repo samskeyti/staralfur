@@ -189,7 +189,7 @@
         $scope.setSearchId = function(id){
             $scope.search.id = id;
             if(id==$scope.user.id)
-                $scope.search.username = $user.name;
+                $scope.search.username = $scope.user.name;
             if(id){
                 $scope.loadMedia();
             }
