@@ -55,22 +55,30 @@
             return value.caption.text.toLowerCase().indexOf($scope.search.toLowerCase())>=0;
         };
         
-        $scope.doSearch = function(){
-            
-            var get = function(){
-            
-                $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&callback=JSON_CALLBACK'
-                ).success(
-                    function(response, status){
-                        $scope.media = $scope.media.concat(response.data);
-                    }
-                ).error(
-                    function(response, status){
+        $scope.max_id = '';
+        
+        $scope.loadMedia = function(){
+            var url = 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=33&callback=JSON_CALLBACK';
+                if($scope.max_id)
+                    url = url + '&max_id=' + $scope.max_id;
+                $http.jsonp(url)
+                    .success(
+                        function(response, status){
+                            $scope.media = $scope.media.concat(response.data);
+                            $scope.max_id = response.pagination.next_max_id;
+                            if(response.pagination.next_url){
+                                $scope.loadMedia();
+                            }
+                        }
+                    ).error(
+                        function(response, status){
                     
-                    }
-                );
-            };
-            get();
+                        }
+                    );
+        };
+        
+        $scope.doSearch = function(){
+            $scope.loadMedia();
         };
         
     }]);
