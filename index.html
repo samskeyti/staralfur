@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="app">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,32 +8,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
 </head>
-<body>
+<body ng-controller="AppController">
   <div id="profile_instagram"></div>
   <button onclick="hello('instagram').login()">IG</button>    
     
+  <input type="text" ng-model="search" ng-change="doSearch()" />    
+    
+  <div ng-repeat="m in media">
+      {{m.caption.text}}  
+  </div>
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
   <script src="js/hello.all.min.js"></script>
   <script>
-      hello.init({ 
-        instagram : 'f9b6f7bd772044dd9f0344dc5af4f056'
-    },{redirect_uri:''});
+      
+
+    angular.module('app', [])
+    .controller('AppController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+        
+        var hello = $window.hello;
+        $scope.access_token = '';
+        $scope.user = {};
+        $scope.media = [];
+        
+        $scope.init = function(){
+            hello.init({ 
+                instagram : 'f9b6f7bd772044dd9f0344dc5af4f056'
+            },{redirect_uri:''});
+            
+            hello.on('auth.login', function(auth){
+               $scope.access_token = auth.authResponse.access_token;
+                    // call user information, for the given network
+                    hello( auth.network ).api( '/me' ).then( function(r){
+                        $scope.user = r;
+                        
+                    });
+                });
+        };
+        $scope.init();
+        
+        $scope.doSearch = function(){
+            $http({
+                method: 'GET',
+                url: 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/',
+                params: {
+                    access_token: $scope.access_token,
+                    count: 100
+                }).then(
+                    function(response){
+                        $scope.media = response.data;
+                    }
+                );
+        };
+        
+    }]);
+
+
+      
+      
+      
 
       var access_token = '';
       
-      hello.on('auth.login', function(auth){
-	   access_token = auth.authResponse.access_token;
-	// call user information, for the given network
-	hello( auth.network ).api( '/me' ).then( function(r){
-		// Inject it into the container
-		var label = document.getElementById( "profile_"+ auth.network );
-		if(!label){
-			label = document.createElement('div');
-			label.id = "profile_"+auth.network;
-			document.getElementById('profile').appendChild(label);
-		}
-		label.innerHTML = '<img src="'+ r.thumbnail +'" /> Hey '+r.name;
-	});
-});
+      
   </script>
 </body>
 </html>
