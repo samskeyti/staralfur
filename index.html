@@ -35,7 +35,7 @@
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <h1 class="samskeyti">starálfur</h1>
-                <h3><small>search Instagram photos</small></h3>
+                <h3><small>search {{search.id ? '@'+search.username : 'Instagram'}} photos</small></h3>
                 <div class="v-spacer" ng-show="!user.id && !search.id"></div>
                 <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
 </a>
