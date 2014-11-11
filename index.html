@@ -64,6 +64,7 @@
                               <span class="input-group-addon">#</span>
                               <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
                         </div>
+                        <small><a href="#" ng-click="setSearchId('')">change user</a></small>
                         <div class="v-spacer"></div>
                     </div>
                 </div>
@@ -187,7 +188,14 @@
         
         $scope.setSearchId = function(id){
             $scope.search.id = id;
-            $scope.loadMedia();
+            if(id==$user.id)
+                $scope.search.username = $user.name;
+            if(id)
+                $scope.loadMedia();
+            else{
+                $scope.search.username = '';
+                $scope.media = [];
+            }
         };
         
     }]);
