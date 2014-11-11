@@ -6,21 +6,79 @@
     <title>starálfur</title>
     <meta name="description" content="starálfur">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/simplex/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: "samskeyti";
+            font-style: normal;
+            font-weight: 300;
+            src: url("samskeyti-Regular.otf") format("opentype");
+        }
+        .v-spacer{
+            display:block;
+            height: 4em;
+        }
+        .samskeyti {
+            font-family: "samskeyti";
+        }
+        h1.samskeyti{
+            font-size: 64px;
+        }
+    </style>
 </head>
 <body ng-controller="AppController">
-  <div id="profile_instagram"></div>
-  <button onclick="hello('instagram').login()">IG</button>    
-    
-  <form ng-submit="doSearch()">
-    <input type="text" ng-model="search" />
-    <input type="submit" value="ok" />
-  </form>
-    
-    {{media.length}}
-  <div ng-repeat="m in media | filter:match">
-      {{m.caption.text}}  
-  </div>
+  
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="v-spacer" ng-show="!user.id"></div>
+                <div class="v-spacer" ng-show="!user.id"></div>
+                <h1 class="samskeyti">starálfur</h1>
+                <h3><small>search Instagram photos</small></h3>
+                <div class="v-spacer" ng-show="!user.id && !search.id"></div>
+                <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
+</a>
+                <div class="row" ng-show="user.id && !search.id">
+                    <div class="col-lg-2 col-lg-offset-4 col-xs-6">
+                        <a href="#" ng-click="setSearchId(user.id)" class="thumbnail">
+                          <img ng-src="{{user.thumbnail}}" class="" alt="You">
+                        </a>
+                        <a href="#" ng-click="setSearchId(user.id)" >Your photos</a>
+                    </div>
+                    <div class="col-lg-2 col-xs-6">
+                        <a href="#" ng-click="setSearchId(search.foundUser)" class="thumbnail">
+                          <img ng-src="{{search.thumbnail}}" class="" alt="{{search.username}}">
+                        </a>
+                        <div class="input-group">
+                          <span class="input-group-addon">@</span>
+                          <input type="text" ng-model="search.username" placeholder="insert user name" ng-change="searchUser()" class="form-control">
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="row" ng-show="user.id && search.id">
+                    <div class="col-lg-4 col-lg-offset-4 col-xs-12">
+                        <div class="input-group">
+                              <span class="input-group-addon">#</span>
+                              <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row" ng-show="">
+                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
+                        <a href="{{m.link}}" target="_blank" class="thumbnail">
+                          <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
     
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
   <script src="js/hello.all.min.js"></script>
@@ -32,7 +90,7 @@
         
         var hello = $window.hello;
         $scope.access_token = '';
-        $scope.user = {};
+        $scope.user = {id:'s', thumbnail: 'http://placehold.it/300&text=You'};
         $scope.media = [];
         
         $scope.init = function(){
@@ -45,21 +103,34 @@
                     // call user information, for the given network
                     hello( auth.network ).api( '/me' ).then( function(r){
                         $scope.user = r;
-                        
+                        $scope.search.user = $scope.user.name;
+                        $scope.search.id = $scope.user.id;
                     });
                 });
         };
         $scope.init();
         
+        $scope.login = function(){
+            $window.hello('instagram').login();
+        };
+        
         $scope.match = function(value, index){
-            if(!value.caption || !value.caption.text || !$scope.search) return false;
+            if(!value.caption || !value.caption.text) return false;
+            if(!$scope.search) return true;
             return value.caption.text.toLowerCase().indexOf($scope.search.toLowerCase())>=0;
         };
         
         $scope.max_id = '';
+        $scope.search = {
+            user: '',
+            id: '',
+            word: '',
+            thumbnail: 'http://placehold.it/300&text=another user'
+        };
         
         $scope.loadMedia = function(){
-            var url = 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=33&callback=JSON_CALLBACK';
+            if($scope.search.id){
+                var url = 'https://api.instagram.com/v1/users/' + $scope.search.id + '/media/recent/?access_token=' + $scope.access_token + '&count=33&callback=JSON_CALLBACK';
                 if($scope.max_id)
                     url = url + '&max_id=' + $scope.max_id;
                 $http.jsonp(url)
@@ -76,9 +147,28 @@
                     
                         }
                     );
+            }
         };
         
         $scope.doSearch = function(){
+            $scope.loadMedia();
+        };
+        
+        $scope.searchUser = function(){
+            if($scope.search.username){
+                var url = 'ttps://api.instagram.com/v1/users/search?q=' + $scope.search.username + '&access_token=' + $scope.access_token + '&count=1&callback=JSON_CALLBACK';
+                $http.jsonp(url)
+                    .success(function(response){
+                        if(response.data[0].username.toLowerCase()==$scope.search.username.toLowerCase()){
+                            $scope.search.foundUser = response.data[0].id;
+                            $scope.search.thumbnail = response.data[0].profile_picture;
+                        }
+                    });
+            }
+        }
+        
+        $scope.setSearchId = function(id){
+            $scope.search.id = id;
             $scope.loadMedia();
         };
         
