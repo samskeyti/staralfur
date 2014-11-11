@@ -70,8 +70,8 @@
                 
                 <div class="row" ng-show="user.id && search.id">
                     <div class="progress" ng-show="count && loading">
-                      <div class="progress-bar" role="progressbar" ng-style="{width: parseInt(media.length*100/count)+'%'}">
-                        {{parseInt(media.length*100/count)}}%
+                      <div class="progress-bar" role="progressbar" ng-style="{width: media.length*100/count+'%'}">
+                        {{media.length+'/'+count}}%
                       </div>
                     </div>
                     <div>&nbsp;</div>
