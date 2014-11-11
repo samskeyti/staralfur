@@ -136,7 +136,7 @@
         
         $scope.loadMedia = function(){
             if($scope.search.id){
-                if(count===null){
+                if($scope.count===null){
                     var url = 'https://api.instagram.com/v1/users/' + $scope.search.id + '/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
                     $http.jsonp(url)
                         .success(function(response){
