@@ -62,7 +62,7 @@
                 $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
                 ).success(
                     function(response, status){
-                        $scope.media.concat(response.data);
+                        $scope.media = $scope.media.concat(response.data);
                     }
                 ).error(
                     function(response, status){
