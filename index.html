@@ -43,13 +43,13 @@
                 <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
 </a>
                 <div class="row" ng-show="user.id && !search.id">
-                    <div class="col-lg-2 col-lg-offset-4 col-xs-6">
+                    <div class="col-lg-2 col-lg-offset-4  col-md-3 col-md-offset-3 col-xs-6">
                         <a href="#" ng-click="setSearchId(user.id)" class="thumbnail">
                           <img ng-src="{{user.thumbnail}}" class="" alt="You">
                         </a>
                         <a href="#" ng-click="setSearchId(user.id)" >Your photos</a>
                     </div>
-                    <div class="col-lg-2 col-xs-6">
+                    <div class="col-lg-2 col-xs-6 col-md-3">
                         <a href="#" ng-click="setSearchId(search.foundUser)" class="thumbnail">
                           <img ng-src="{{search.thumbnail}}" class="" alt="{{search.username}}">
                         </a>
