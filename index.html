@@ -52,7 +52,7 @@
         $scope.init();
         
         $scope.match = function(value, index){
-            return value[index].caption.text.indexOf($scope.search)>=0;
+            return value.caption.text.toLowerCase().indexOf($scope.search.toLowerCase())>=0;
         };
         
         $scope.doSearch = function(){
