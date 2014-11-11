@@ -12,9 +12,13 @@
   <div id="profile_instagram"></div>
   <button onclick="hello('instagram').login()">IG</button>    
     
-  <input type="text" ng-model="search" ng-change="doSearch()" />    
+  <form ng-submit="doSearch()">
+    <input type="text" ng-model="search" />
+    <input type="submit" value="ok" />
+  </form>
     
-  <div ng-repeat="m in media">
+    {{media.length}}
+  <div ng-repeat="m in media | filter:match">
       {{m.caption.text}}  
   </div>
     
@@ -47,17 +51,26 @@
         };
         $scope.init();
         
+        $scope.match = function(value, index){
+            return value.caption.text.indexOf($scope.search)>=0;
+        };
+        
         $scope.doSearch = function(){
-            $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
+            
+            var get = function(){
+            
+                $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
                 ).success(
                     function(response, status){
-                        $scope.media = response.data;
+                        $scope.media.push(response.data);
                     }
                 ).error(
                     function(response, status){
                     
                     }
                 );
+            };
+            get();
         };
         
     }]);
