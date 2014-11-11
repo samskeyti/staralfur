@@ -59,7 +59,7 @@
             
             var get = function(){
             
-                $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
+                $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&callback=JSON_CALLBACK'
                 ).success(
                     function(response, status){
                         $scope.media = $scope.media.concat(response.data);
