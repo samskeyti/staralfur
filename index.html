@@ -57,8 +57,12 @@
                     callback: 'callbackFunction'
                     }
                 }).success(
-                    function(response){
-                        $scope.media = response().data;
+                    function(response, status){
+                        $scope.media = response.data;
+                    }
+                ).error(
+                    function(response, status){
+                    
                     }
                 );
         };
