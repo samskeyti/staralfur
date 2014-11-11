@@ -64,6 +64,7 @@
                               <span class="input-group-addon">#</span>
                               <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
                         </div>
+                        <div class="v-spacer"></div>
                     </div>
                 </div>
                 
@@ -73,6 +74,7 @@
                         {{parseInt(media.length*100/count)}}%
                       </div>
                     </div>
+                    <div>&nbsp;</div>
                     <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
                           <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
