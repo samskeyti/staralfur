@@ -55,7 +55,7 @@
                     access_token: $scope.access_token,
                     count: 100
                     }
-                }).then(
+                }).success(
                     function(response){
                         $scope.media = response.data;
                     }
