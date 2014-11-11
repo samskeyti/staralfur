@@ -121,7 +121,7 @@
         };
         
         $scope.match = function(value, index){
-            if(!$scope.search) return false;
+            if(!$scope.search.word) return false;
             if(!value.caption || !value.caption.text) return false;
             return value.caption.text.toLowerCase().indexOf($scope.search.word.toLowerCase())>=0;
         };
