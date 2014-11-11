@@ -103,8 +103,7 @@
                     // call user information, for the given network
                     hello( auth.network ).api( '/me' ).then( function(r){
                         $scope.user = r;
-                        $scope.search.user = $scope.user.name;
-                        $scope.search.id = $scope.user.id;
+                        
                     });
                 });
         };
