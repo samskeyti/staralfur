@@ -71,7 +71,7 @@
                 <div class="row" ng-show="user.id && search.id">
                     <div class="progress" ng-show="count && loading">
                       <div class="progress-bar" role="progressbar" ng-style="{width: media.length*100/count+'%'}">
-                        {{media.length+'/'+count}}%
+                        {{media.length+' / '+count}}
                       </div>
                     </div>
                     <div>&nbsp;</div>
@@ -121,7 +121,7 @@
         };
         
         $scope.match = function(value, index){
-            if(!$scope.search.word) return false;
+            if(!$scope.search.word || $scope.search.word.length<3) return false;
             if(!value.caption || !value.caption.text) return false;
             return value.caption.text.toLowerCase().indexOf($scope.search.word.toLowerCase())>=0;
         };
