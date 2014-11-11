@@ -69,8 +69,8 @@
                 
                 <div class="row" ng-show="user.id && search.id">
                     <div class="progress" ng-show="count && loading">
-                      <div class="progress-bar" role="progressbar" ng-style="{width: (media.length/count)+'%'}">
-                        {{(media.length/count)}}%
+                      <div class="progress-bar" role="progressbar" ng-style="{width: parseInt(media.length*100/count)+'%'}">
+                        {{parseInt(media.length*100/count)}}%
                       </div>
                     </div>
                     <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
@@ -119,7 +119,7 @@
         };
         
         $scope.match = function(value, index){
-            if(!$scope.search) return true;
+            if(!$scope.search) return false;
             if(!value.caption || !value.caption.text) return false;
             return value.caption.text.toLowerCase().indexOf($scope.search.word.toLowerCase())>=0;
         };
