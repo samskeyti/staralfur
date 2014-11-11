@@ -49,7 +49,7 @@
         
         $scope.doSearch = function(){
             $http({
-                method: 'GET',
+                method: 'JSONP',
                 url: 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/',
                 params: {
                     access_token: $scope.access_token,
