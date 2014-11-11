@@ -48,9 +48,8 @@
         $scope.init();
         
         $scope.doSearch = function(){
-            $http.jsonp({
-                url: 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
-                }).success(
+            $http.jsonp('https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/?access_token='+$scope.access_token+'&count=100&callback=JSON_CALLBACK'
+                ).success(
                     function(response, status){
                         $scope.media = response.data;
                     }
