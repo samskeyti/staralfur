@@ -53,11 +53,12 @@
                 url: 'https://api.instagram.com/v1/users/'+$scope.user.id+'/media/recent/',
                 params: {
                     access_token: $scope.access_token,
-                    count: 100
+                    count: 100,
+                    callback: 'callbackFunction'
                     }
                 }).success(
                     function(response){
-                        $scope.media = response.data;
+                        $scope.media = response().data;
                     }
                 );
         };
