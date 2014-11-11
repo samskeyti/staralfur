@@ -121,7 +121,7 @@
         $scope.match = function(value, index){
             if(!$scope.search) return true;
             if(!value.caption || !value.caption.text) return false;
-            return value.caption.text.toLowerCase().indexOf($scope.search.toLowerCase())>=0;
+            return value.caption.text.toLowerCase().indexOf($scope.search.word.toLowerCase())>=0;
         };
         
         $scope.max_id = '';
@@ -140,7 +140,7 @@
                     var url = 'https://api.instagram.com/v1/users/' + $scope.search.id + '/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
                     $http.jsonp(url)
                         .success(function(response){
-                            $scope.count = response.counts.media;
+                            $scope.count = response.data.counts.media;
                             $scope.loading = true;
                         });
                 }
