@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>starálfur</title>
-    <meta name="description" content="starálfur">
+    <meta name="description" content="starálfur: a staring elf who finds your Instagram photos">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/simplex/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
@@ -31,7 +31,15 @@
     </style>
 </head>
 <body ng-controller="AppController" ng-cloak>
-  
+  <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/it_IT/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+    
     <div class="container">
         <div class="row">
             <div class="col-lg-12 text-center">
@@ -93,7 +101,7 @@
                         <small class="text-muted">made by @samskeyti79 - <a href="https://instagram.com/samskeyti79" target="_blank"><i class="fa fa-instagram"></i></a> <a href="https://twitter.com/samskeyti79"><i class="fa fa-twitter"></i>
 </a></small>
                         <div><a href="https://twitter.com/share" class="twitter-share-button" data-url="https://samskeyti.github.io/staralfur/" data-via="samskeyti79" data-related="samskeyti79">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></div>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script><div class="fb-like" data-href="https://samskeyti.github.io/staralfur/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div></div>
                         <div class="v-spacer"></div>
                     </div>
                 </div>
