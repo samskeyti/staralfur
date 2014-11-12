@@ -137,7 +137,17 @@
         $scope.match = function(value, index){
             if(!$scope.search.word || $scope.search.word.length<3) return false;
             if(!value.caption || !value.caption.text) return false;
-            return value.caption.text.toLowerCase().indexOf($scope.search.word.toLowerCase())>=0;
+            var s = $scope.search.word.toLowerCase().trim();
+            var c = value.caption.text.toLowerCase();
+            if(s.indexOf(' ')>0){
+                var a = s.split(' ');
+                for(var i=0; i<a.length; i++){
+                    if(c.indexOf(a[i])<0) return false;
+                }
+                return true;
+            } else {
+                return c.indexOf(s)>=0;
+            }
         };
         
         $scope.max_id = '';
