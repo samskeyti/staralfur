@@ -30,8 +30,10 @@
         }
     </style>
     <script>
-        //if(window.location.protocol=='http:')
-          //  window.location.href = 'https://samskeyti.github.io/staralfur';
+        if(window.location.protocol=='http:'){
+            window.location.protocol = 'https:';
+            window.location.reload();
+        }
     </script>
 </head>
 <body ng-controller="AppController" ng-cloak>
