@@ -92,7 +92,7 @@
                       </div>
                     </div>
                     <div>&nbsp;</div>
-                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media track by $index | filter:match">
+                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
                           <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
                         </a>
@@ -155,7 +155,7 @@
             if(!$scope.search.word || $scope.search.word.length<3) return false;
             if(!value.caption || !value.caption.text) return false;
             var s = $scope.search.word.toLowerCase().trim();
-            var c = value._search;
+            var c = value._search ? value._search : '';
             if(s.indexOf(' ')>0){
                 var a = s.split(' ');
                 for(var i=0; i<a.length; i++){
@@ -199,8 +199,6 @@
                     .success(
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
-                              //var d = response.data[i];
-                              //d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                               if(true || $scope.search.comments){
                                 $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                   .success(function(res){
@@ -213,7 +211,9 @@
                                     $scope.media.push(d);
                                   });
                               } else {
-                                $scope.media.push(response.data[i]);
+                                var d = response.data[i];
+                                d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
+                                $scope.media.push(d);
                               }
                             }
                             $scope.max_id = response.pagination.next_max_id;
