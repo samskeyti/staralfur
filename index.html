@@ -200,9 +200,9 @@
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
                               var d = response.data[i];
-                              d._search = d.caption.text.toLowerCase();
+                              d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                               if(true || $scope.search.comments){
-                                $http.jsonp('https://api.instagram.com/v1/media/' + d.id + '?access_token=' + $scope.access_token)
+                                $http.jsonp('https://api.instagram.com/v1/media/' + d.id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                   .success(function(res){
                                     for(var j=0; j<res.data.comments.data.length; j++){
                                       d._search += ' ' + res.data.comments.data[i].text.toLowerCase();
