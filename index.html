@@ -205,8 +205,14 @@
                                     var d = res.data;
                                     d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                                     for(var j=0; j<res.data.comments.data.length; j++){
-                                      if(res.data && res.data.comments && res.data.comments.data[j] && res.data.comments.data[j].text)
-                                        d._search += ' ' + res.data.comments.data[j].text.toLowerCase();
+                                      if(res.data && res.data.comments && res.data.comments.data[j] && res.data.comments.data[j].text){
+                                        var comment = res.data.comments.data[j];
+                                        d._search += ' ' + comment.text.toLowerCase();
+                                        if(comment.from && comment.from.username)
+                                          d._search += ' ' + comment.from.username.toLowerCase();
+                                        if(comment.from && comment.from.full_name)
+                                          d._search += ' ' + comment.from.full_name.toLowerCase();
+                                      }
                                     }
                                     $scope.media.push(d);
                                   });
