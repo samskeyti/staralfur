@@ -199,19 +199,21 @@
                     .success(
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
-                              var d = response.data[i];
-                              d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
+                              //var d = response.data[i];
+                              //d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                               if(true || $scope.search.comments){
                                 $http.jsonp('https://api.instagram.com/v1/media/' + d.id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                   .success(function(res){
+                                    var d = res.data;
+                                    d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                                     for(var j=0; j<res.data.comments.data.length; j++){
-                                      if(res.data && res.data.comments && res.data.comments.data[i] && res.data.comments.data[i].text)
-                                        d._search += ' ' + res.data.comments.data[i].text.toLowerCase();
+                                      if(res.data && res.data.comments && res.data.comments.data[j] && res.data.comments.data[j].text)
+                                        d._search += ' ' + res.data.comments.data[j].text.toLowerCase();
                                     }
                                     $scope.media.push(d);
                                   });
                               } else {
-                                $scope.media.push(d);
+                                $scope.media.push(response.data[i]);
                               }
                             }
                             $scope.max_id = response.pagination.next_max_id;
