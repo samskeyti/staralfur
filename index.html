@@ -80,10 +80,6 @@
                               <span class="input-group-addon">#</span>
                               <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
                         </div>
-                        <div class="input-group">
-                              <input class="form-control" type="checkbox" ng-model="search.comments">
-                              <label>search also in comments</label>
-                        </div>
                         <small><a href="#" ng-click="setSearchId('')">change user</a></small>
                         <div class="v-spacer"></div>
                     </div>
@@ -205,7 +201,7 @@
                             for(var i=0; i<response.data.length; i++){
                               var d = response.data[i];
                               d._search = d.caption.text.toLowerCase();
-                              if($scope.search.comments){
+                              if(true || $scope.search.comments){
                                 $http.jsonp('https://api.instagram.com/v1/media/' + d.id + '?access_token=' + $scope.access_token)
                                   .success(function(res){
                                     for(var j=0; j<res.data.comments.data.length; j++){
