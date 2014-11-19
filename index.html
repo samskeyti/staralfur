@@ -92,7 +92,7 @@
                       </div>
                     </div>
                     <div>&nbsp;</div>
-                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
+                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media track by $index | filter:match">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
                           <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
                         </a>
@@ -155,7 +155,7 @@
             if(!$scope.search.word || $scope.search.word.length<3) return false;
             if(!value.caption || !value.caption.text) return false;
             var s = $scope.search.word.toLowerCase().trim();
-            var c = value._search.toLowerCase();
+            var c = value._search;
             if(s.indexOf(' ')>0){
                 var a = s.split(' ');
                 for(var i=0; i<a.length; i++){
