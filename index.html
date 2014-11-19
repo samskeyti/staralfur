@@ -202,7 +202,7 @@
                               //var d = response.data[i];
                               //d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
                               if(true || $scope.search.comments){
-                                $http.jsonp('https://api.instagram.com/v1/media/' + d.id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
+                                $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                   .success(function(res){
                                     var d = res.data;
                                     d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
