@@ -123,7 +123,7 @@
 
 
     angular.module('app', [])
-    .controller('AppController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+    .controller('AppController', ['$scope', '$http', '$window', '$timeout', function($scope, $http, $window, $timeout) {
 
         $scope.version = '1.0';
         $scope.storage = $window.sessionStorage;
@@ -229,14 +229,14 @@
                                   $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                     .success(function(res){
                                       var d = $scope.setSearch(res);
-                                      if($scope.search.id)$scope.media.push(d);
+                                      if($scope.search.id && $scope.count!=null)$scope.media.push(d);
                                       $scope.storage[$scope.storageId('media', res.data.id)] = angular.toJson(res);
                                     });
                                 }
                               } else {
                                 var d = response.data[i];
                                 d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
-                                if($scope.search.id)$scope.media.push(d);
+                                if($scope.search.id && $scope.count!=null)$scope.media.push(d);
                               }
                             }
                             $scope.max_id = response.pagination.next_max_id;
@@ -289,7 +289,8 @@
         $scope.toggleComments = function(){
           $scope.media = [];
           $scope.count = null;
-          $scope.loadMedia();
+
+          $timeout(function(){$scope.loadMedia();},2000);
         };
 
     }]);
