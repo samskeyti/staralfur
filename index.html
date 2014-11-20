@@ -80,7 +80,7 @@
                               <span class="input-group-addon">#</span>
                               <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
                         </div>
-                        <div class="pull-left"><input type="checkbox" ng-model="search.comments"> search also in comments</div>
+                        <div class="pull-left"><input type="checkbox" ng-model="search.comments" ng-change="toggleComments()"> search also in comments</div>
                         <small class="pull-right"><a href="#" ng-click="setSearchId('')">change user</a></small>
                         <div class="v-spacer"></div>
                     </div>
@@ -284,6 +284,12 @@
                 $scope.media = [];
                 $scope.count = null;
             }
+        };
+
+        $scope.toggleComments = function(){
+          $scope.media = [];
+          $scope.count = null;
+          $scope.loadMedia();
         };
 
     }]);
