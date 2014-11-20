@@ -80,7 +80,8 @@
                               <span class="input-group-addon">#</span>
                               <input class="form-control input-lg" type="text" ng-model="search.word" placeholder="search by caption">
                         </div>
-                        <small><a href="#" ng-click="setSearchId('')">change user</a></small>
+                        <div class="pull-left"><input type="checkbox" ng-model="search.comments"> search also in comments</div>
+                        <small class="pull-right"><a href="#" ng-click="setSearchId('')">change user</a></small>
                         <div class="v-spacer"></div>
                     </div>
                 </div>
@@ -219,7 +220,7 @@
                     .success(
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
-                              if(true || $scope.search.comments){
+                              if($scope.search.comments){
                                 if($scope.storage[$scope.storageId('media', response.data[i].id)]){
                                   var res = angular.fromJson($scope.storage[$scope.storageId('media', response.data[i].id)]);
                                   var d = $scope.setSearch(res);
