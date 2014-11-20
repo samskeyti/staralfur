@@ -125,7 +125,7 @@
     .controller('AppController', ['$scope', '$http', '$window', function($scope, $http, $window) {
 
         $scope.version = '1.0';
-        $scope.storage = $window.localStorage;
+        $scope.storage = $window.sessionStorage;
         var hello = $window.hello;
         $scope.access_token = '';
         $scope.user = {id:'', thumbnail: 'https://placehold.it/300&text=You'};
@@ -182,6 +182,26 @@
         $scope.count = null;
         $scope.loading = false;
 
+        $scope.setSearch = function(res){
+          var d = res.data;
+          d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
+          for(var j=0; j<res.data.comments.data.length; j++){
+            if(res.data && res.data.comments && res.data.comments.data[j] && res.data.comments.data[j].text){
+              var comment = res.data.comments.data[j];
+              d._search += ' ' + comment.text.toLowerCase();
+              if(comment.from && comment.from.username)
+                d._search += ' ' + comment.from.username.toLowerCase();
+                if(comment.from && comment.from.full_name)
+                  d._search += ' ' + comment.from.full_name.toLowerCase();
+                }
+              }
+          return d;
+        };
+
+        $scope.storageId = function(type, id){
+          return type + '/' + id;
+        };
+
         $scope.loadMedia = function(){
             if($scope.search.id){
                 if($scope.count===null){
@@ -200,22 +220,18 @@
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
                               if(true || $scope.search.comments){
-                                $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
-                                  .success(function(res){
-                                    var d = res.data;
-                                    d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
-                                    for(var j=0; j<res.data.comments.data.length; j++){
-                                      if(res.data && res.data.comments && res.data.comments.data[j] && res.data.comments.data[j].text){
-                                        var comment = res.data.comments.data[j];
-                                        d._search += ' ' + comment.text.toLowerCase();
-                                        if(comment.from && comment.from.username)
-                                          d._search += ' ' + comment.from.username.toLowerCase();
-                                        if(comment.from && comment.from.full_name)
-                                          d._search += ' ' + comment.from.full_name.toLowerCase();
-                                      }
-                                    }
-                                    $scope.media.push(d);
-                                  });
+                                if($scope.storage[$scope.storageId('media', response.data[i].id)]){
+                                  var res = angular.fromJson($scope.storage[$scope.storageId('media', response.data[i].id)]);
+                                  var d = setSearch(res);
+                                  $scope.media.push(d);
+                                } else {
+                                  $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
+                                    .success(function(res){
+                                      var d = setSearch(res);
+                                      $scope.media.push(d);
+                                      $scope.storage[$scope.storageId('media', res.data.id)] = angular.toJson(res);
+                                    });
+                                }
                               } else {
                                 var d = response.data[i];
                                 d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
