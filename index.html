@@ -228,14 +228,14 @@
                                   $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                     .success(function(res){
                                       var d = $scope.setSearch(res);
-                                      $scope.media.push(d);
+                                      if($scope.search.id)$scope.media.push(d);
                                       $scope.storage[$scope.storageId('media', res.data.id)] = angular.toJson(res);
                                     });
                                 }
                               } else {
                                 var d = response.data[i];
                                 d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
-                                $scope.media.push(d);
+                                if($scope.search.id)$scope.media.push(d);
                               }
                             }
                             $scope.max_id = response.pagination.next_max_id;
@@ -279,7 +279,9 @@
             }
             else{
                 $scope.search.username = '';
+                $scope.search.word = '';
                 $scope.media = [];
+                $scope.count = null;
             }
         };
 
