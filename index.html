@@ -224,7 +224,7 @@
                                 if($scope.storage[$scope.storageId('media', response.data[i].id)]){
                                   var res = angular.fromJson($scope.storage[$scope.storageId('media', response.data[i].id)]);
                                   var d = $scope.setSearch(res);
-                                  $scope.media.push(d);
+                                  if($scope.search.id && $scope.count!=null)$scope.media.push(d);
                                 } else {
                                   $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                     .success(function(res){
