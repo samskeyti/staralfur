@@ -222,12 +222,12 @@
                               if(true || $scope.search.comments){
                                 if($scope.storage[$scope.storageId('media', response.data[i].id)]){
                                   var res = angular.fromJson($scope.storage[$scope.storageId('media', response.data[i].id)]);
-                                  var d = setSearch(res);
+                                  var d = $scope.setSearch(res);
                                   $scope.media.push(d);
                                 } else {
                                   $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                     .success(function(res){
-                                      var d = setSearch(res);
+                                      var d = $scope.setSearch(res);
                                       $scope.media.push(d);
                                       $scope.storage[$scope.storageId('media', res.data.id)] = angular.toJson(res);
                                     });
