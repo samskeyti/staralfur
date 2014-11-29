@@ -309,7 +309,7 @@
           $scope.count[$scope.type] = null;
           $scope.max_id[$scope.type] = '';
 
-          $timeout(function(){$scope.loadMedia($scope.type);},2000);
+          $scope.loadMedia($scope.type);
         };
 
     }]);
