@@ -87,13 +87,13 @@
                 </div>
 
                 <div class="row" ng-show="user.id && search.id">
-                    <div class="progress" ng-show="count && loading">
-                      <div class="progress-bar" role="progressbar" ng-style="{width: media.length*100/count+'%'}">
-                        {{media.length+' / '+count}}
+                    <div class="progress" ng-show="count[type] && loading[type]">
+                      <div class="progress-bar" role="progressbar" ng-style="{width: media[type].length*100/count[type]+'%'}">
+                        {{media[type].length+' / '+count[type]}}
                       </div>
                     </div>
                     <div>&nbsp;</div>
-                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media | filter:match">
+                    <div class="col-lg-3 col-xs-6" ng-repeat="m in media[type] | filter:match">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
                           <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
                         </a>
@@ -130,7 +130,10 @@
         var hello = $window.hello;
         $scope.access_token = '';
         $scope.user = {id:'', thumbnail: 'https://placehold.it/300&text=You'};
-        $scope.media = [];
+        $scope.media = {
+          caption: [],
+          comments: []
+        };
 
         $scope.init = function(){
             hello.init({
@@ -173,15 +176,24 @@
             }
         };
 
-        $scope.max_id = '';
+        $scope.max_id = {
+          caption: '',
+          comments: ''
+        };
         $scope.search = {
             user: '',
             id: '',
             word: '',
             thumbnail: 'https://placehold.it/150&text=another user'
         };
-        $scope.count = null;
-        $scope.loading = false;
+        $scope.count = {
+          caption: null,
+          comments: null
+        };
+        $scope.loading = {
+          caption: false,
+          comments: false
+        };
 
         $scope.setSearch = function(res){
           var d = res.data;
@@ -203,47 +215,47 @@
           return type + '/' + id;
         };
 
-        $scope.loadMedia = function(){
+        $scope.loadMedia = function(type){
             if($scope.search.id){
-                if($scope.count===null){
+                if($scope.count[type]===null){
                     var url = 'https://api.instagram.com/v1/users/' + $scope.search.id + '/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
                     $http.jsonp(url)
                         .success(function(response){
-                            $scope.count = response.data.counts.media;
-                            $scope.loading = true;
+                            $scope.count[type] = response.data.counts.media;
+                            $scope.loading[type] = true;
                         });
                 }
                 var url = 'https://api.instagram.com/v1/users/' + $scope.search.id + '/media/recent/?access_token=' + $scope.access_token + '&count=33&callback=JSON_CALLBACK';
-                if($scope.max_id)
-                    url = url + '&max_id=' + $scope.max_id;
+                if($scope.max_id[type])
+                    url = url + '&max_id=' + $scope.max_id[type];
                 $http.jsonp(url)
                     .success(
                         function(response, status){
                             for(var i=0; i<response.data.length; i++){
-                              if($scope.search.comments){
+                              if(type=='comments'){
                                 if($scope.storage[$scope.storageId('media', response.data[i].id)]){
                                   var res = angular.fromJson($scope.storage[$scope.storageId('media', response.data[i].id)]);
                                   var d = $scope.setSearch(res);
-                                  if($scope.search.id && $scope.count!=null)$scope.media.push(d);
+                                  if($scope.search.id && $scope.count!=null)$scope.media['comments'].push(d);
                                 } else {
                                   $http.jsonp('https://api.instagram.com/v1/media/' + response.data[i].id + '?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                                     .success(function(res){
                                       var d = $scope.setSearch(res);
-                                      if($scope.search.id && $scope.count!=null)$scope.media.push(d);
+                                      if($scope.search.id && $scope.count['comments']!=null)$scope.media['comments'].push(d);
                                       $scope.storage[$scope.storageId('media', res.data.id)] = angular.toJson(res);
                                     });
                                 }
                               } else {
                                 var d = response.data[i];
                                 d._search = d.caption && d.caption.text ? d.caption.text.toLowerCase() : '';
-                                if($scope.search.id && $scope.count!=null)$scope.media.push(d);
+                                if($scope.search.id && $scope.count['caption']!=null)$scope.media['caption'].push(d);
                               }
                             }
-                            $scope.max_id = response.pagination.next_max_id;
+                            $scope.max_id[type] = response.pagination.next_max_id;
                             if(response.pagination.next_url){
-                                $scope.loadMedia();
+                                $scope.loadMedia(type);
                             } else {
-                                $scope.loading = false;
+                                $scope.loading[type] = false;
                             }
                         }
                     ).error(
@@ -254,8 +266,13 @@
             }
         };
 
+        $scope.type = 'caption';
+        $scope.searchType = function(){
+          return $scope.search.comments ? 'comments' : 'caption';
+        };
+
         $scope.doSearch = function(){
-            $scope.loadMedia();
+            $scope.loadMedia($scope.searchType());
         };
 
         $scope.searchUser = function(){
@@ -276,21 +293,23 @@
             if(id==$scope.user.id)
                 $scope.search.username = $scope.user.data.username;
             if(id){
-                $scope.loadMedia();
+                $scope.loadMedia($scope.searchType());
             }
             else{
                 $scope.search.username = '';
                 $scope.search.word = '';
-                $scope.media = [];
-                $scope.count = null;
+                $scope.media[$scope.searchType()] = [];
+                $scope.count[$scope.searchType()] = null;
             }
         };
 
         $scope.toggleComments = function(){
-          $scope.media = [];
-          $scope.count = null;
+          $scope.type = $scope.searchType();
+          $scope.media[$scope.type] = [];
+          $scope.count[$scope.type] = null;
+          $scope.max_id[$scope.type] = '';
 
-          $timeout(function(){$scope.loadMedia();},2000);
+          $timeout(function(){$scope.loadMedia($scope.type);},2000);
         };
 
     }]);
