@@ -7,7 +7,7 @@
     <meta name="description" content="starálfur: a staring elf who finds your Instagram photos">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.0/simplex/bootstrap.min.css" rel="stylesheet">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         @font-face {
             font-family: "samskeyti";
@@ -28,6 +28,7 @@
         [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
             display: none !important;
         }
+        .angular-google-map-container { min-height: 600px;}
     </style>
 
 </head>
@@ -51,11 +52,16 @@
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <h1 class="samskeyti">starálfur</h1>
-                <h3><small>search <a href="https://instagram.com{{search.id ? '/'+search.username : ''}}" target="_blank">{{search.id ? '@'+search.username : 'Instagram'}}</a> photos</small></h3>
+                <h3>
+                    <small ng-show="!map">search <a href="https://instagram.com{{search.id ? '/'+search.username : ''}}" target="_blank">{{search.id ? '@'+search.username : 'Instagram'}}</a> photos</small>
+                    <small ng-show="!user.id">or map your likes</small>
+                    <small ng-show="map">map your likes</small>
+                </h3>
                 <div class="v-spacer" ng-show="!user.id && !search.id"></div>
+
                 <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
 </a>
-                <div class="row" ng-show="user.id && !search.id">
+                <div class="row" ng-show="user.id && !search.id && !map">
                     <div class="col-lg-2 col-lg-offset-4  col-md-3 col-md-offset-3 col-xs-6">
                         <a href="#" ng-click="setSearchId(user.id)" class="thumbnail">
                           <img ng-src="{{user.thumbnail}}" class="" alt="You">
@@ -72,6 +78,30 @@
                         </div>
 
                     </div>
+
+                </div>
+                <div class="v-spacer"></div>
+                <div class="row" ng-show="user.id && !search.id && !map">
+                    <div class="col-lg-2 col-lg-offset-5 col-md-2 col-md-offset-5 col-xs-12">
+                        or <a href="#" ng-click="openMap()">map</a> your likes
+                        <h2>
+                            <span class="fa-stack fa-lg">
+                              <i class="fa fa-map-o fa-stack-2x"></i>
+                              <a href="#" ng-click="openMap()"><i class="fa fa-heart fa-stack-1x"></i></a>
+                            </span>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="row" ng-show="user.id && map">
+                    <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+                        <ui-gmap-markers
+                            models="likes"
+                            coords="'self'"
+                            icon="'icon'"
+                            fit="true">
+                        </ui-gmap-markers>
+                    </ui-gmap-google-map>
                 </div>
 
                 <div class="row" ng-show="user.id && search.id">
@@ -116,20 +146,31 @@
         </div>
     </div>
 
-
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.js"></script>
+  <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+  <script src='js/lodash.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.js"></script>
   <script src="js/hello.all.min.js"></script>
+  <script src='js/angular-simple-logger.js'></script>
+  <script src='js/angular-google-maps.min.js'></script>
   <script>
 
 
-    angular.module('app', [])
-    .controller('AppController', ['$scope', '$http', '$window', '$timeout', function($scope, $http, $window, $timeout) {
+    angular.module('app', ['uiGmapgoogle-maps'])
+    .config(function(uiGmapGoogleMapApiProvider) {
+        uiGmapGoogleMapApiProvider.configure({
+            //    key: 'your api key',
+            v: '3.20', //defaults to latest 3.X anyhow
+            libraries: 'weather,geometry,visualization'
+        });
+    })
+    .controller('AppController', ['$scope', '$http', '$window', '$timeout', 'uiGmapGoogleMapApi',
+        function($scope, $http, $window, $timeout, uiGmapGoogleMapApi) {
 
         $scope.version = '1.0';
         $scope.storage = $window.sessionStorage;
         var hello = $window.hello;
         $scope.access_token = '';
-        $scope.user = {id:'', thumbnail: 'https://placehold.it/300&text=You'};
+        $scope.user = {id:'', thumbnail: 'https://placehold.it/300x300&text=You'};
         $scope.media = {
           caption: [],
           comments: []
@@ -184,7 +225,7 @@
             user: '',
             id: '',
             word: '',
-            thumbnail: 'https://placehold.it/150&text=another user'
+            thumbnail: 'https://placehold.it/150x150&text=another user'
         };
         $scope.count = {
           caption: null,
@@ -194,6 +235,41 @@
           caption: false,
           comments: false
         };
+        $scope.map = null;
+
+        $scope.openMap = function(){
+
+
+            $scope.map = { center: {
+                latitude: 45, longitude: 10
+            }, zoom: 3 };
+            $scope.likes = [];
+
+            $scope.loadLikes();
+
+        };
+
+        $scope.loadLikes = function(nextUrl){
+            if(!nextUrl)
+                nextUrl = 'https://api.instagram.com/v1/users/self/media/liked/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
+            $http.jsonp(nextUrl)
+                .success(function(response){
+                    for(var i=0, len=response.data.length; i<len; i++){
+                        var l = response.data[i];
+                        if(l.location){
+                            $scope.likes.push({
+                                latitude: l.location.latitude,
+                                longitude: l.location.longitude,
+                                id: l.id,
+                                icon: l.images.thumbnail.url
+                            })
+                        }
+                    }
+                    if(response.data.length>0){
+                        $scope.loadLikes(response.pagination.next_url);
+                    }
+                });
+        }
 
         $scope.setSearch = function(res){
           var d = res.data;
@@ -323,15 +399,6 @@
 
 
   </script>
-    <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-17682747-10', 'auto');
-  ga('send', 'pageview');
-
-</script>
 </body>
 </html>
