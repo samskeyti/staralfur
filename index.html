@@ -254,9 +254,10 @@
         $scope.loadLikes = function(nextUrl){
             if(!nextUrl)
                 nextUrl = 'https://api.instagram.com/v1/users/self/media/liked/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
+            console.log(nextUrl);
             $http.jsonp(nextUrl)
                 .success(function(response){
-                    console.log('likes');
+                    console.log('likes ' +response.data.length);
                     $scope.likesCount+=response.data.length;
                     for(var i=0, len=response.data.length; i<len; i++){
                         var l = response.data[i];
