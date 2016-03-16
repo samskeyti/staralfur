@@ -94,14 +94,23 @@
                 </div>
 
                 <div class="row" ng-show="user.id && map">
-                    <div>likes: {{likesCount}} (with location: {{likes.length}})</div>
-                    <ui-gmap-google-map center='map.center' zoom='map.zoom'>
-                        <ui-gmap-markers
-                            models="likes"
-                            coords="'self'"
-                            icon="'icon'">
-                        </ui-gmap-markers>
-                    </ui-gmap-google-map>
+
+                    <div class="col-lg-10 col-md-8 col-xs-12">
+                        <div>likes: {{likesCount}} (with location: {{likes.length}})</div>
+                        <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+                            <ui-gmap-markers
+                                models="likes"
+                                coords="'self'"
+                                icon="'icon'"
+                                click="clickMarker">
+                            </ui-gmap-markers>
+                        </ui-gmap-google-map>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-xs-12">
+                        <h4>{{clicked.location}}</h4>
+                        <img ng-src="{{clicked.url}}">
+                    </div>
+
                 </div>
 
                 <div class="row" ng-show="user.id && search.id">
@@ -265,6 +274,7 @@
                             $scope.likes.push({
                                 latitude: l.location.latitude,
                                 longitude: l.location.longitude,
+                                location: l.location.name,
                                 id: l.id,
                                 icon: {
                                     url:l.images.thumbnail.url,
@@ -272,7 +282,8 @@
                                         width: 30,
                                         height: 30
                                     }
-                                }
+                                },
+                                image: l.images.low_resolution.url
                             });
                         }
                     }
@@ -280,6 +291,12 @@
                         $scope.loadLikes(response.pagination.next_url + '&callback=JSON_CALLBACK');
                     }
                 });
+        }
+
+        $scope.clicked = {};
+        $scope.clickMarker = function(marker, event, model){
+            $scope.clicked.location = model.location;
+            $scope.clicked.url = model.image;
         }
 
         $scope.setSearch = function(res){
