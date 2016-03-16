@@ -94,6 +94,7 @@
                 </div>
 
                 <div class="row" ng-show="user.id && map">
+                    <div>likes: {{likesCount}} (with location: {{likes.length}})</div>
                     <ui-gmap-google-map center='map.center' zoom='map.zoom'>
                         <ui-gmap-markers
                             models="likes"
@@ -244,6 +245,7 @@
                 latitude: 45, longitude: 10
             }, zoom: 3 };
             $scope.likes = [];
+            $scope.likesCount = 0;
 
             $scope.loadLikes();
 
@@ -254,9 +256,12 @@
                 nextUrl = 'https://api.instagram.com/v1/users/self/media/liked/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
             $http.jsonp(nextUrl)
                 .success(function(response){
+                    console.log('likes');
+                    $scope.likesCount+=response.data.length;
                     for(var i=0, len=response.data.length; i<len; i++){
                         var l = response.data[i];
                         if(l.location){
+                            console.log(l.location.name);
                             $scope.likes.push({
                                 latitude: l.location.latitude,
                                 longitude: l.location.longitude,
