@@ -263,9 +263,12 @@
                                 id: l.id,
                                 icon: {
                                     url:l.images.thumbnail.url,
-                                    size: 30
+                                    size: {
+                                        width: 30,
+                                        height: 30
+                                    }
                                 }
-                            })
+                            });
                         }
                     }
                     if(response.data.length>0){
