@@ -278,7 +278,7 @@
                         }
                     }
                     if(response.data.length>0){
-                        $scope.loadLikes(response.pagination.next_url);
+                        $scope.loadLikes(response.pagination.next_url + '&callback=JSON_CALLBACK');
                     }
                 });
         }
