@@ -107,8 +107,8 @@
                         </ui-gmap-google-map>
                     </div>
                     <div class="col-lg-2 col-md-4 col-xs-12">
-                        <h4>{{clicked.location}}</h4>
-                        <img ng-src="{{clicked.url}}">
+                        <h5 class="text-left">{{clicked.location}}</h5>
+                        <img ng-repeat="url in clicked.urls" ng-src="{{url}}" class="img-responsive img-thumbnail">
                     </div>
 
                 </div>
@@ -259,6 +259,7 @@
 
         };
 
+        var locations = {};
         $scope.loadLikes = function(nextUrl){
             if(!nextUrl)
                 nextUrl = 'https://api.instagram.com/v1/users/self/media/liked/?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
@@ -275,6 +276,7 @@
                                 latitude: l.location.latitude,
                                 longitude: l.location.longitude,
                                 location: l.location.name,
+                                locationId: l.location.id,
                                 id: l.id,
                                 icon: {
                                     url:l.images.thumbnail.url,
@@ -285,6 +287,9 @@
                                 },
                                 image: l.images.low_resolution.url
                             });
+                            if(!locations[l.location.id])
+                                locations[l.location.id] = [];
+                            locations[l.location.id].push(l.images.low_resolution.url);
                         }
                     }
                     if(response.data.length>0){
@@ -296,7 +301,7 @@
         $scope.clicked = {};
         $scope.clickMarker = function(marker, event, model){
             $scope.clicked.location = model.location;
-            $scope.clicked.url = model.image;
+            $scope.clicked.urls = locations[model.locationId];
         }
 
         $scope.setSearch = function(res){
