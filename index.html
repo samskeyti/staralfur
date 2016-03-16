@@ -261,7 +261,10 @@
                                 latitude: l.location.latitude,
                                 longitude: l.location.longitude,
                                 id: l.id,
-                                icon: l.images.thumbnail.url
+                                icon: {
+                                    url:l.images.thumbnail.url,
+                                    size: 30
+                                }
                             })
                         }
                     }
