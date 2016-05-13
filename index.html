@@ -162,7 +162,7 @@
                 </div>
                 
                 <div class="row" ng-show="location">
-                    <h3>Media with tag <span class="red">#{{mapTag}}</span> in <span class="red">{{mapTagLocationName}}</span></h3>
+                    <h3>Media with tag <span class="red">#{{mapTag}}</span> in <span class="red">{{mapTagLocationName}}</span>: {{mapTags.length}} on last {{mapTagsCount}}</h3>
                     <div class="progress" ng-show="mapTagRequests<mapMaxTagRequests">
                       <div class="progress-bar" role="progressbar" ng-style="{width: mapTagRequests*100/mapMaxTagRequests+'%'}">
                         {{mapTagRequests*100/mapMaxTagRequests+'%'}}
@@ -322,7 +322,7 @@
         };
 
 
-        $scope.mapMaxTagRequests = 20;
+        $scope.mapMaxTagRequests = 100;
         $scope.loadLocation = function(latLng){
             $http.jsonp('https://api.instagram.com/v1/locations/search?lat='+latLng.latitude+'&lng='+latLng.longitude+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                 .success(function(response){
