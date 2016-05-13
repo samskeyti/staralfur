@@ -319,7 +319,7 @@
 
 
         $scope.mapMaxTagRequests = 20;
-        $scope.loadLocation(latLng){
+        $scope.loadLocation = function(latLng){
             $http.jsonp('https://api.instagram.com/v1/locations/search?lat='+latLng.latitude+'&lng='+latLng.longitude+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
                 .success(function(response){
                     if(response.data && response.data[0]){
