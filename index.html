@@ -163,11 +163,7 @@
                 
                 <div class="row" ng-show="location">
                     <h3>Media with tag <span class="red">#{{mapTag}}</span> in <span class="red">{{mapTagLocationName}}</span>: {{mapTags.length}} on last {{mapTagsCount}}</h3>
-                    <div class="progress" ng-show="mapTagRequests<mapMaxTagRequests">
-                      <div class="progress-bar" role="progressbar" ng-style="{width: mapTagRequests*100/mapMaxTagRequests+'%'}">
-                        {{mapTagRequests*100/mapMaxTagRequests+'%'}}
-                      </div>
-                    </div>
+                    
                     <div>&nbsp;</div>
                     <div class="col-lg-3 col-xs-6" ng-repeat="m in mapTags">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
