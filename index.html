@@ -356,7 +356,7 @@
                     }
                     $scope.mapTagRequests++;
                     if(response.data.length>0 && $scope.mapTagRequests<=$scope.mapMaxTagRequests){
-                        $scope.loadMapTag(locId, 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?min_id='+min_id+'access_token=' + $scope.access_token + '&callback=JSON_CALLBACK');
+                        $scope.loadMapTag(locId, 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?min_id='+min_id+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK');
                     }
                 });
         };
