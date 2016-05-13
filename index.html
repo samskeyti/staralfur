@@ -61,7 +61,7 @@
 
                 <a href="#" ng-show="!user.id" ng-click="login()" class="btn btn-lg btn-default"><i class="fa fa-instagram" style="font-size:xx-large;"></i>&nbsp;&nbsp;Login
 </a>
-                <div class="row" ng-show="user.id && !search.id && !map">
+                <div class="row" ng-show="user.id && !search.id && !map && !location">
                     <div class="col-lg-2 col-lg-offset-4  col-md-3 col-md-offset-3 col-xs-6">
                         <a href="#" ng-click="setSearchId(user.id)" class="thumbnail">
                           <img ng-src="{{user.thumbnail}}" class="" alt="You">
@@ -81,15 +81,32 @@
 
                 </div>
                 <div class="v-spacer"></div>
-                <div class="row" ng-show="user.id && !search.id && !map">
-                    <div class="col-lg-2 col-lg-offset-5 col-md-2 col-md-offset-5 col-xs-12">
-                        or <a href="#" ng-click="openMap()">map</a> your likes
+                <div class="row" ng-show="user.id && !search.id && !map && !location">
+                    <div class="col-lg-2 col-lg-offset-4 col-md-2 col-md-offset-4 col-xs-12">
+                        <a href="#" ng-click="openMap()">map</a> your likes
                         <h2>
                             <span class="fa-stack fa-lg">
                               <i class="fa fa-map-o fa-stack-2x"></i>
                               <a href="#" ng-click="openMap()"><i class="fa fa-heart fa-stack-1x"></i></a>
                             </span>
                         </h2>
+                    </div>
+                    <div class="col-lg-2 col-lg-offset-4 col-md-2 col-md-offset-4 col-xs-12">
+                        or <a href="#" ng-click="openMapTag()">map</a> a tag
+                        <h2>
+                            <span class="fa-stack fa-lg">
+                              <i class="fa fa-map-marker fa-stack-2x"></i>
+                              <a href="#" ng-click="openMapTag()"><i class="fa fa-hashtag fa-stack-1x"></i></a>
+                            </span>
+                        </h2>
+                        <div class="input-group">
+                          <span class="input-group-addon"></span>
+                          <input type="text" ng-model="mapTagPlace" placeholder="insert a place name" class="form-control">
+                        </div>
+                        <div class="input-group">
+                          <span class="input-group-addon">#</span>
+                          <input type="text" ng-model="mapTag" placeholder="insert an hastag" class="form-control">
+                        </div>
                     </div>
                 </div>
 
@@ -135,6 +152,20 @@
                     </div>
                     <div>&nbsp;</div>
                     <div class="col-lg-3 col-xs-6" ng-repeat="m in media[type] | filter:match">
+                        <a href="{{m.link}}" target="_blank" class="thumbnail">
+                          <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="row" ng-show="location">
+                    <div class="progress" ng-show="mapTagRequests<mapMaxTagRequests">
+                      <div class="progress-bar" role="progressbar" ng-style="{width: mapTagRequests*100/mapMaxTagRequests+'%'}">
+                        {{mapTagRequests*100/mapMaxTagRequests+'%'}}
+                      </div>
+                    </div>
+                    <div>&nbsp;</div>
+                    <div class="col-lg-3 col-xs-6" ng-repeat="m in mapTags">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
                           <img ng-src="{{m.images.standard_resolution.url}}" alt="{{m.caption.text}}">
                         </a>
@@ -259,6 +290,75 @@
 
             $scope.loadLikes();
 
+        };
+        
+        $scope.mapTagPlace = '';
+        $scope.mapTag = '';
+        $scope.openMapTag = function(){
+            if($scope.mapTagPlace && $scope.mapTag){
+                
+                var geocoder = new google.maps.Geocoder;
+                geocoder.geocode({address: $scope.mapTagPlace}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    var latLng = {
+                        latitude: results[0].geometry.location.lat(),
+                        longitude: results[0].geometry.location.lng()
+                    }
+                    
+                    $scope.loadLocation(latLng);
+                    
+                } else {
+                    //alert("Geocode was not successful for the following reason: " + status);
+                }
+                })
+            
+
+                  
+            }
+        };
+
+
+        $scope.mapMaxTagRequests = 20;
+        $scope.loadLocation(latLng){
+            $http.jsonp('https://api.instagram.com/v1/locations/search?lat='+latLng.latitude+'&lng='+latLng.longitude+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK')
+                .success(function(response){
+                    if(response.data && response.data[0]){
+                        var locId = response.data[0].id;
+                        $scope.mapTagLocationName = response.data[0].name;
+                        
+                        $scope.mapTagRequests = 0;
+                        $scope.mapTags = [];
+                        $scope.mapTagsCount = 0;
+                        $scope.loadMapTag(locId);
+                        
+                        $scope.location = locId;
+                    }
+                });
+        }
+
+
+        $scope.loadMapTag = function(locId, nextUrl){
+            if(!nextUrl)
+                nextUrl = 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?access_token=' + $scope.access_token + '&callback=JSON_CALLBACK';
+            console.log(nextUrl);
+            $http.jsonp(nextUrl)
+                .success(function(response){
+                    $scope.mapTagsCount+=response.data.length;
+                    var min_id = '';
+                    for(var i=0, len=response.data.length; i<len; i++){
+                        var l = response.data[i];
+                        if(l.tags && l.tags.indexOf($scope.mapTag)>=0){
+                            
+                            $scope.mapTags.push(l);
+                            
+                        }
+                        min_id = l.id;
+                    }
+                    $scope.mapTagRequests++;
+                    if(response.data.length>0 && $scope.mapTagRequests<=$scope.mapMaxTagRequests){
+                        $scope.loadMapTag(locId, 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?min_id='+min_id+'access_token=' + $scope.access_token + '&callback=JSON_CALLBACK');
+                    }
+                });
         };
 
         var locations = {};
