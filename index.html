@@ -344,7 +344,7 @@
             $http.jsonp(nextUrl)
                 .success(function(response){
                     $scope.mapTagsCount+=response.data.length;
-                    var min_id = '';
+                    var max_id = '';
                     for(var i=0, len=response.data.length; i<len; i++){
                         var l = response.data[i];
                         if(l.tags && l.tags.indexOf($scope.mapTag)>=0){
@@ -352,11 +352,11 @@
                             $scope.mapTags.push(l);
                             
                         }
-                        min_id = l.id;
+                        max_id = l.id;
                     }
                     $scope.mapTagRequests++;
                     if(response.data.length>0 && $scope.mapTagRequests<=$scope.mapMaxTagRequests){
-                        $scope.loadMapTag(locId, 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?min_id='+min_id+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK');
+                        $scope.loadMapTag(locId, 'https://api.instagram.com/v1/locations/'+locId+'/media/recent?max_id='+max_id+'&access_token=' + $scope.access_token + '&callback=JSON_CALLBACK');
                     }
                 });
         };
