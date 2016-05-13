@@ -29,6 +29,9 @@
             display: none !important;
         }
         .angular-google-map-container { min-height: 600px;}
+        .red{
+            color: #d9230f;
+        }
     </style>
 
 </head>
@@ -159,6 +162,7 @@
                 </div>
                 
                 <div class="row" ng-show="location">
+                    <h3>Media with tag <span class="red">#{{mapTag}}</span> in <span class="red">{{mapTagLocationName}}</span></h3>
                     <div class="progress" ng-show="mapTagRequests<mapMaxTagRequests">
                       <div class="progress-bar" role="progressbar" ng-style="{width: mapTagRequests*100/mapMaxTagRequests+'%'}">
                         {{mapTagRequests*100/mapMaxTagRequests+'%'}}
