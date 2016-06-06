@@ -55,6 +55,9 @@
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <div class="v-spacer" ng-show="!user.id"></div>
                 <h1 class="samskeyti">starálfur</h1>
+
+<h4>Questa applicazione è chiusa per colpa di quei simpaticoni di Instagram. La spiegazione è <a href="https://medium.com/@samskeyti79/la-chiusura-di-instagram-cd0b5c337d69#.wwqq3a2u2">qui</a></h4>
+                <!--
                 <h3>
                     <small ng-show="!map">search <a href="https://instagram.com{{search.id ? '/'+search.username : ''}}" target="_blank">{{search.id ? '@'+search.username : 'Instagram'}}</a> photos</small>
                     <small ng-show="!user.id">or map your likes</small>
@@ -160,10 +163,10 @@
                         </a>
                     </div>
                 </div>
-                
+
                 <div class="row" ng-show="location">
                     <h3>Media with tag <span class="red">#{{mapTag}}</span> in <span class="red">{{mapTagLocationName}}</span>: {{mapTags.length}} on last {{mapTagsCount}}</h3>
-                    
+
                     <div>&nbsp;</div>
                     <div class="col-lg-3 col-xs-6" ng-repeat="m in mapTags">
                         <a href="{{m.link}}" target="_blank" class="thumbnail">
@@ -171,7 +174,7 @@
                         </a>
                     </div>
                 </div>
-
+-->
                 <div class="v-spacer"></div><div class="v-spacer"></div><div class="v-spacer"></div>
                 <div class="row">
                     <div class="col-lg-4 col-lg-offset-4 col-xs-12">
@@ -291,12 +294,12 @@
             $scope.loadLikes();
 
         };
-        
+
         $scope.mapTagPlace = '';
         $scope.mapTag = '';
         $scope.openMapTag = function(){
             if($scope.mapTagPlace && $scope.mapTag){
-                
+
                 var geocoder = new google.maps.Geocoder;
                 geocoder.geocode({address: $scope.mapTagPlace}, function(results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {
@@ -304,16 +307,16 @@
                         latitude: results[0].geometry.location.lat(),
                         longitude: results[0].geometry.location.lng()
                     }
-                    
+
                     $scope.loadLocation(latLng);
-                    
+
                 } else {
                     //alert("Geocode was not successful for the following reason: " + status);
                 }
                 })
-            
 
-                  
+
+
             }
         };
 
@@ -325,12 +328,12 @@
                     if(response.data && response.data[0]){
                         var locId = response.data[0].id;
                         $scope.mapTagLocationName = response.data[0].name;
-                        
+
                         $scope.mapTagRequests = 0;
                         $scope.mapTags = [];
                         $scope.mapTagsCount = 0;
                         $scope.loadMapTag(locId);
-                        
+
                         $scope.location = locId;
                     }
                 });
@@ -348,9 +351,9 @@
                     for(var i=0, len=response.data.length; i<len; i++){
                         var l = response.data[i];
                         if(l.tags && l.tags.indexOf($scope.mapTag)>=0){
-                            
+
                             $scope.mapTags.push(l);
-                            
+
                         }
                         max_id = l.id;
                     }
