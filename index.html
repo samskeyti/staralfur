@@ -224,7 +224,7 @@
         $scope.init = function(){
             hello.init({
                 instagram : '35dac0039b2f4544aa7fa6995af6c54d'
-            },{redirect_uri:''});
+            },{redirect_uri:'', scope: 'public_content'});
 
             hello.on('auth.login', function(auth){
                $scope.access_token = auth.authResponse.access_token;
